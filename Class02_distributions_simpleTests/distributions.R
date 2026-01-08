@@ -6,20 +6,6 @@
   library(abd)
   library(patchwork)
 
-### types of objects
-  data.frames
-  data.tables
-  lists
-  vectors
-  functions
-
-### importing data
-
-### looking at data objects
-  dim
-  str
-  summary
-
 ### moments
   mean(ShrinkingSeals$length) ### mean
   sd(ShrinkingSeals$length) ### standard deviation
@@ -73,7 +59,7 @@
 
 #### the Seal Preservation Association is obsessed with knowing how big the average seal, and how much variance in seal size. Their last survey was a few years ago, and they want to conduct a new expidition in 2026.
 ### they reached out to you for help.
-### Based on your preliminary data from the last survey of seals (the ShrinkingSeals), how many seals do they need to sample to 
+### Based on your preliminary data from the last survey of seals (the ShrinkingSeals), how many seals do they need to sample to
 
 
 ### t.test
