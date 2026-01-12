@@ -5,6 +5,7 @@
   install.packages("readxl")
   install.packages("abd")
   install.packages("patchwork")
+  install.packages("googlesheets4")
 
 ### libraries. You need to run these lines at the start of every R session.
   library(data.table)
@@ -13,6 +14,7 @@
   library(readxl)
   library(abd)
   library(patchwork)
+  library(googlesheets4)
 
 ### types of data
 ### Data in can be represented (most commonly) as a number, in integer, a character, a factor.
@@ -116,19 +118,62 @@
     l[1]
 
   ## functions. Functions take input data, do something to that data and return it.
-    
+    fun <- function(x, y) {
+      x*y
+    }
+    fun(4978,2)
 
+    fun2 <- function(x, y) {
+      data.table(x=x, y=y, xy=x*y)
+    }
+    fun2(4978,2)
+    fun2(x=c(1,10,100), y=2)
+    fun2(x=c(1,10,100), y=c(2,4))
+    fun2(x=c(1,10,100,1000), y=c(2,4))
+
+    ## the code inside a function can access objects in the general workspace (be careful). But only one object can be retunred from a function. Usually it is the last line (if that line prints to the console).
+    fun2 <- function(x, y) {
+      return(data.table(x=x, y=y, xy=x*y)) ### or you can return it
+    }
 
 ### importing data
   ### "flat" csv files
+    read.csv("~/test_data.csv")
+    fread("~/test_data.csv") ### useful funciton from data.table. Flexible, tolerant, tidy. All the things you look for in a function.
+    fread("https://raw.githubusercontent.com/BIOL8082/Stats_Spring2026/refs/heads/main/Class01_obects_data_types/test_data.csv") ### it can also read directly from the internet
+
   ### Excel files
+    read_excel("~/test_data.xlsx", sheet="Dataset 3 320-324 cont.") ### tibbles are like data.tables except that Alan does not use them.
+    as.data.table(read_excel("~/test_data.xlsx", sheet="Dataset 3 320-324 cont.")) ### that is better
+
   ### Google sheets
+    read_sheet("https://docs.google.com/spreadsheets/d/1t1OUUDtHbtmWPtp3pS32MI2awU9V8bfmoi3NBgqtDnQ/edit?usp=sharing")
+
   ### Rdata/RDS files
+    dt <- fread("https://raw.githubusercontent.com/BIOL8082/Stats_Spring2026/refs/heads/main/Class01_obects_data_types/test_data.csv")
+    save(dt, file="~/dt.Rdata") ### this sames an environment with named variables
+    save(dt, fun2, l, file="~/objects.Rdata") ### you can save multiple objects
+    saveRDS(dt, file="~/dt.RDS") ### saves a single R object but when you re-import you have to collec the data in a new object
 
+    ### clear the workspace
+    ls() ### these are the objects in the workspace
+    rm(list=ls()) ### this removes all of the objects
 
+    ### load data
+    load(file="~/dt.Rdata")
+    ls()
 
+    ### try again
+    rm(list=ls()) ### this removes all of the objects
+    load(file="~/objects.Rdata")
+    ls()
+
+    ### now with RDS
+    readRDS(file="~/dt.RDS")
+    dt <- readRDS(file="~/dt.RDS")
 
 ### looking at data objects
-  dim
-  str
-  summary
+  dim(dt)
+  str(dt)
+  summary(dt)
+  str(l)
