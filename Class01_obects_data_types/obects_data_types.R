@@ -1,5 +1,5 @@
 ### installing packages. You only need to run these lines once (per computer, or after you've installed the latest version of R)
-  install.packages("data.table"
+  install.packages("data.table")
   install.packages("readxl")
   install.packages("googlesheets4")
 
@@ -46,19 +46,20 @@
     vec <- c(1,2,3)
     vec <- c("A", "B", "C")
     vec <- c(1, "B", "C")
+    class(vec)
 
   ## matrices. Matrices are two-dimensional objects of the same type
     matrix(c(1:9), nrow=3, ncol=3)
     matrix(c(1:9), nrow=3)
     matrix(c(1:9), ncol=3)
     matrix(c(1:8), ncol=3)
-    matrix(c(1:9), ncol=3, byrow=T)
+    matrix(c(1:3), ncol=3, nrow=3, byrow=T)
     mat <- matrix(c(1:9), ncol=3, byrow=F)
     mat
 
     mat[1,]  ### this prints the first row
     mat[,1]  ### this prints the first column
-    mat[1,3] ### first row, 3rd column
+    mat[c(1,3),3] ### first row, 3rd column
 
   ## array. Arrays are n-dimensional objects of same type
     arr <- array(c(1:27), dim=c(3,3,3))
@@ -89,7 +90,7 @@
     dt[1,2] ### same as above
     dt[fruit=="apple",] ## same as above
     dt[fruit=="apple"] ## simpler notation but same result
-    dt[,list(average=mean(num)), list(fruit)] ## one of the more usefule features of data.tables. You can calculate summary statistics for individual levels of columns.
+    dt[,list(average=mean(num)), list(fruit)] ## one of the more useful features of data.tables. You can calculate summary statistics for individual levels of columns.
     dt[,list(average=mean(num), stdev=sd(num)), list(fruit)] ## one of the more usefule features of data.tables. You can calculate summary statistics for individual levels of columns.
 
     setkey(dt, fruit) ### indexing is another very useful feature of data.tables.
@@ -99,7 +100,11 @@
     dt2 <- as.data.table(df2) ### you can merge two data.tables by a common column. You can also merge by multiple columns
     setkey(dt2, fruit)
     merge(dt, dt2)
-    merge(dt, dt2, by="fruit")
+    merge(dt, dt2, by="fruit", all.x=T, all.y=T)
+
+  df$V1 <- c(10,11,12)
+    dt[,V4:=rnorm(300)]
+    dt[fruit=="pear",V5:=rnorm(100)]
 
   ## lists. lists are collections of other objects. Each element of a list can be a different object type, or can be lists themselves
     l <- list()
@@ -131,7 +136,7 @@
 
 ### importing data
   ### "flat" csv files
-    read.csv("~/test_data.csv")
+    dt <- read.csv("~/test_data.csv")
     fread("~/test_data.csv") ### useful funciton from data.table. Flexible, tolerant, tidy. All the things you look for in a function.
     fread("https://raw.githubusercontent.com/BIOL8082/Stats_Spring2026/refs/heads/main/Class01_obects_data_types/test_data.csv") ### it can also read directly from the internet
 
