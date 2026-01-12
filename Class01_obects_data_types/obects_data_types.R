@@ -1,19 +1,11 @@
 ### installing packages. You only need to run these lines once (per computer, or after you've installed the latest version of R)
   install.packages("data.table"
-  install.packages("ggplot2")
-  install.packages("foreach")
   install.packages("readxl")
-  install.packages("abd")
-  install.packages("patchwork")
   install.packages("googlesheets4")
 
 ### libraries. You need to run these lines at the start of every R session.
   library(data.table)
-  library(ggplot2)
-  library(foreach)
   library(readxl)
-  library(abd)
-  library(patchwork)
   library(googlesheets4)
 
 ### types of data
@@ -98,6 +90,7 @@
     dt[fruit=="apple",] ## same as above
     dt[fruit=="apple"] ## simpler notation but same result
     dt[,list(average=mean(num)), list(fruit)] ## one of the more usefule features of data.tables. You can calculate summary statistics for individual levels of columns.
+    dt[,list(average=mean(num), stdev=sd(num)), list(fruit)] ## one of the more usefule features of data.tables. You can calculate summary statistics for individual levels of columns.
 
     setkey(dt, fruit) ### indexing is another very useful feature of data.tables.
     dt[J("pear")] # You can do quick subsets.
