@@ -102,9 +102,11 @@
     merge(dt, dt2)
     merge(dt, dt2, by="fruit", all.x=T, all.y=T)
 
-  df$V1 <- c(10,11,12)
-    dt[,V4:=rnorm(300)]
-    dt[fruit=="pear",V5:=rnorm(100)]
+
+  ### adding new columsn to data-frames and data-tables.
+    df$V1 <- c(10,11,12) ### this is how you add columns with data-frames
+    dt[,V4:=rnorm(300)] ### with data-tables
+    dt[fruit=="pear", V5:=rnorm(100)] ### the data can be filled in for only a subsection of the object
 
   ## lists. lists are collections of other objects. Each element of a list can be a different object type, or can be lists themselves
     l <- list()
