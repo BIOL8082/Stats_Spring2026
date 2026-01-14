@@ -31,9 +31,14 @@
   sd(ShrinkingSeals$length)/sqrt(length(ShrinkingSeals$length)) ### the standard error
 
 ### your turn: can you transform age in days into a new column of age in years, to match the publication?
-
-### your turn: calculate the mean, sd, variance, sample size, standard errors for each unique value of age, in years  
  
+  
+### plots
+  ggplot(data=ShrinkingSeals, aes(y=length, x=age, color=as.factor(age_years_integer))) + geom_point()
+  ggplot(data=ShrinkingSeals, aes(y=length, x=age, color=as.factor(age_years_integer))) + geom_boxplot()
+  
+### your turn: calculate the mean, sd, variance, sample size, standard errors for each unique value of age, in years  
+
 ### our turn. Let's make a plot. What do we notice?
   se.plot <- ggplot(data=ss.ag, aes(y=mean, x=years)) + 
     geom_line(color="black") +
@@ -60,13 +65,57 @@
   ?t.test
   
 ### your turn: what two parameters do we need for the t-test, and how to we extract them from the data?
-   
-### 
+    
+    
+### Let's image that we have no ruler to measure our seals, and instead classify them as big (>125cm) or small (<=125cm). 
+  ShrinkingSeals[,size_binary:=ifelse(length>125, "big", "small")]
+  
+### Let's also pretend that we only know if they are young (<10 year) or old (>=10 years).
+### your turn: make the binary age column
 
   
+### tabulation
+  ### one and two way tables
+    table(ShrinkingSeals$size_binary)  ### makes counts of unique values
+    table(ShrinkingSeals$age_binary)
+    prop.table(table(ShrinkingSeals$age_binary)) ### divides by the sum of the table
+    
+    table(ShrinkingSeals$size_binary, ShrinkingSeals$age_binary)  ###two-way tables
   
+  ### annoyingly, the table is transposed and "your PI" is a real stickler for the ordering of axes on the table: small->big top to bottom; young->old left to right.
+    ShrinkingSeals[,size_binary:=factor(size_binary, levels=c("small", "big"))]
+    ShrinkingSeals[,age_binary:=factor(age_binary, levels=c("young", "old"))]
+    
+  ### that's better. What do you notice?
+    table(ShrinkingSeals$size_binary, ShrinkingSeals$age_binary)
   
+  ### formal test using Chisq
+    tab <-  table(ShrinkingSeals$size_binary, ShrinkingSeals$age_binary)
+    tab
+    chisq.test(tab)
   
+  ### where is there excess or deficit
+    chisq_enrichment <- function(x) {
+      if (!all(dim(x) == c(2, 2))) {
+        stop("Input must be a 2x2 matrix")
+      }
+      
+      # Expected counts from chi-square
+      expected <- outer(rowSums(x), colSums(x)) / sum(x)
+      
+      # Enrichment as (observed - expected)/expected
+      enrichment <- (x - expected)/expected
+      
+      return(list(
+        observed = x,
+        expected = expected,
+        enrichment = enrichment
+      ))
+    }
+    chisq_enrichment(tab)$enrichment
+    
+    
+    
   
-  
-  
+    
+    
