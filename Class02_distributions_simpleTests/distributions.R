@@ -30,6 +30,10 @@
 ### the standard error
   sd(ShrinkingSeals$length)/sqrt(length(ShrinkingSeals$length)) ### the standard error
 
+### confidence intervals
+  c(mean(ShrinkingSeals$length) - 1.96*(sd(ShrinkingSeals$length)/sqrt(length(ShrinkingSeals$length))),
+    mean(ShrinkingSeals$length) + 1.96*(sd(ShrinkingSeals$length)/sqrt(length(ShrinkingSeals$length))))
+  
 ### your turn: can you transform age in days into a new column of age in years, to match the publication?
  
   
@@ -43,11 +47,11 @@
   se.plot <- ggplot(data=ss.ag, aes(y=mean, x=years)) + 
     geom_line(color="black") +
     geom_point(size=4) +
-    geom_linerange(aes(ymin=mean-2*se, ymax=mean+2*se)) +
+    geom_linerange(aes(ymin=mean-1.96*se, ymax=mean+1.96*se)) +
     theme_bw() + 
     xlab("Age (years)") + ylab("Length (cm)") +
     ylim(c(100,145)) +
-    ggtitle("Two Standard Errors")
+    ggtitle("95% Confidence intervals")
   
   sd.plot <- ggplot(data=ss.ag, aes(y=mean, x=years)) + 
     geom_line(color="black") +
@@ -94,7 +98,7 @@
     tab
     chisq.test(tab)
   
-  ### where is there excess or deficit (I asked ChatGPT to write this function using the prompt: "write me R code to generate the deviation between observation and expectation for a 2x2 table. Use the Chisq formula, but return the results as the enrichment=(observation-expectation)/expectation)
+  ### where is there excess or deficit? (I asked ChatGPT to write this function using the prompt: "write me R code to generate the deviation between observation and expectation for a 2x2 table. Use the Chisq formula, but return the results as the enrichment=(observation-expectation)/expectation)
     chisq_enrichment <- function(x) {
       if (!all(dim(x) == c(2, 2))) {
         stop("Input must be a 2x2 matrix")
