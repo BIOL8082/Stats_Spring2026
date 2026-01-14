@@ -94,7 +94,7 @@
     tab
     chisq.test(tab)
   
-  ### where is there excess or deficit
+  ### where is there excess or deficit (I asked ChatGPT to write this function using the prompt: "write me R code to generate the deviation between observation and expectation for a 2x2 table. Use the Chisq formula, but return the results as the enrichment=(observation-expectation)/expectation)
     chisq_enrichment <- function(x) {
       if (!all(dim(x) == c(2, 2))) {
         stop("Input must be a 2x2 matrix")
