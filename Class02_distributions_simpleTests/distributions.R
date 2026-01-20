@@ -16,6 +16,8 @@
   ShrinkingSeals
   
 ### your turn: what are the dimensions and structure of this object?
+    dim(ShrinkingSeals)
+    str(ShrinkingSeals)
     
 ### plotting the data. What are some noticable features of the data?
   ggplot(data=ShrinkingSeals, aes(length)) + geom_histogram()
@@ -35,14 +37,20 @@
     mean(ShrinkingSeals$length) + 1.96*(sd(ShrinkingSeals$length)/sqrt(length(ShrinkingSeals$length))))
   
 ### your turn: can you transform age in days into a new column of age in years, to match the publication?
- 
+  ShrinkingSeals <- as.data.table(ShrinkingSeals)
+  ShrinkingSeals[,age_year:=floor(age/365)]
+  ShrinkingSeals[,age_years_integer:=floor(age/365 +.5 )]
   
 ### plots
   ggplot(data=ShrinkingSeals, aes(y=length, x=age, color=as.factor(age_years_integer))) + geom_point()
   ggplot(data=ShrinkingSeals, aes(y=length, x=age, color=as.factor(age_years_integer))) + geom_boxplot()
   
 ### your turn: calculate the mean, sd, variance, sample size, standard errors for each unique value of age, in years, using the data.table notation
-  
+  ss.ag <- ShrinkingSeals[,list(mean=mean(length),
+                                sd=sd(length),
+                                n=length(length),
+                                se=sd(length)/sqrt(length(length))),
+                          list(years=age_years_integer)]
   
 ### our turn. Let's make a plot. What do we notice?
   se.plot <- ggplot(data=ss.ag, aes(y=mean, x=years)) + 
@@ -65,19 +73,20 @@
   
   se.plot + sd.plot + plot_annotation(tag_levels="A")
   
-### is there a statistically significant difference in the length between years 2 & 3? Let's use a t-test
+### is there a statistically significant difference in the length between years 3 & 4? Let's use a t-test
   setkey(ShrinkingSeals, age_years_integer)
-  ?t.test
   
 ### your turn: what two parameters do we need for the t-test, and how to we extract them from the data?
-    
+  t.test(x=ShrinkingSeals[J(3)],
+         y=ShrinkingSeals[J(4)])
+  
     
 ### Let's image that we have no ruler to measure our seals, and instead classify them as big (>125cm) or small (<=125cm). 
   ShrinkingSeals[,size_binary:=ifelse(length>125, "big", "small")]
   
 ### Let's also pretend that we only know if they are young (<10 year) or old (>=10 years).
 ### your turn: make the binary age column
-
+  ShrinkingSeals[,age_binary:=ifelse(age_years_integer<10, "young", "old")]
   
 ### tabulation
   ### one and two way tables
