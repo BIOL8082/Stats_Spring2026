@@ -7,11 +7,7 @@ install.packages("lmerTest")
   library(patchwork)
 
 ### load data
-  load("/Users/alanbergland/Documents/work/Projects/2005-2019/2010_Dissertation/Individual Projects/Clinal Populations/ Data/Clinal_analysis.Rdata")
-  clinal <- as.data.table(clinal)
-  clinal <- clinal[,c("ovn", "tlmm", "food", "vial", "block", "geno")]
-  write.csv(clinal, file="/Users/alanbergland/Documents/GitHub/Stats_Spring2026/Class05_modelSelection_mixedEffects/clinal_flies.csv", quote=F, row.names=F)
-  
+   clinal <- fread("https://raw.githubusercontent.com/BIOL8082/Stats_Spring2026/refs/heads/main/Class05_modelSelection_mixedEffects/clinal_flies.csv")
   
 ### look at the data
 ### food is food quality measured as yeast concentration
@@ -70,13 +66,18 @@ install.packages("lmerTest")
   t2 <- lmer(tlmm~food+(1|geno)+(1|vial), data=clinal)
   summary(t2)  
   
-  t3 <- lmer(tlmm~food+(food|geno)+(1|vial), data=clinal)
+  t3 <- lmer(tlmm~food+(1+food|geno)+(1|vial), data=clinal)
   summary(t3)  
   
   anova(t3, t2, t1, t0)
     
-  lmerTest::ranova(t2)
+  lmerTest::ranova(t3)
   
-
+### what about a block effect? Is that a random effect or a fixed effect?
+  g1 <- lmer(tlmm~food+(1|geno)+(1|vial)+(1|block), data=clinal)
+  g2 <- lmer(tlmm~food+(food|geno)+(1|vial)+(1|block), data=clinal)
   
-    
+  anova(g1, g2)
+  
+  
+  

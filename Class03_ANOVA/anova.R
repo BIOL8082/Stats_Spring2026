@@ -14,16 +14,23 @@
   str(apples)
   summary(apples)
   apples[,geno:=as.factor(geno)]
-
+  apples <- apples[,c(1:7)]
+  
 ### take a minute to look at the data. use structure, table, and make some histograms.
-     
+  tlmm_plot <- ggplot(data=apples, aes(tlmm)) + geom_histogram()
+  ovn_plot <- ggplot(data=apples, aes(ovn)) + geom_histogram()
+  tlmm_plot + ovn_plot
+  
 ### basic ANOVA - thorax length.
   aov(tlmm~food, data=apples)
   summary(aov(tlmm~food, data=apples))
   summary(aov(tlmm~food+geno, data=apples))
   summary(aov(tlmm~food*geno, data=apples))
-
+  summary(aov(tlmm~food+geno+food:geno, data=apples))
+  summary(aov(tlmm~food:geno, data=apples))
+  
 ### your turn - set up the anova for ovariole number (ovn)
+  summary(aov(ovn~food*geno, data=apples))
   
 ### R's base `aov` function uses Type I sum of squares, or sequential sum of squares
 ### That means that the sum of squared deviations is calculated for the second term, after accounting for the first term.
@@ -39,7 +46,9 @@
   Anova(lm(ovn~geno+food, data=apples), type="II")
 
 ### Our turn: Does the ovariole number model violate any ANOVA assumptions? Setting up an ANOVA using generalized linear models
- 
+  Anova(glm(ovn~food*geno, data=apples, family=poisson()))
+  anova(glm(ovn~food*geno, data=apples, family=poisson()))
+  
 ### The ANOVA analysis suggests that there is some effect of food, genotype, and their interaciton. Let's visualize it.
 ### Your turn: generate the mean and 95% confidence intervals for ovariole number and thorax length for each genotype & food condition.
 ### Use the aggregation technique from data.table. Here is a handy function to generate confidence intervals
@@ -55,12 +64,13 @@
   }
   
   ### a template
-  apples.ag <- apples[,list(), 
-                      list()]
+  apples.ag <- apples[,list(tlmm.mean=mean(tlmm), tlmm.lci=ci.fun(tlmm)[1], tlmm.uci=ci.fun(tlmm)[2],
+                             ovn.mean=mean(ovn),   ovn.lci=ci.fun(ovn)[1],  ovn.uci=ci.fun(ovn)[2]), 
+                      list(food, geno)]
 
 
 ### example plot
-  dodge.amount=.1
+  dodge.amount=0.2
   
   tlmm.ag.plot <- ggplot(data=apples.ag, aes(x=food, y=tlmm.mean, group=geno, color=geno)) + 
     geom_line(position = position_dodge(width =  dodge.amount)) + 
