@@ -43,6 +43,14 @@ install.packages("foreach")
     pheno.use <- dcast(pheno.trim, ral_id~variable, measure.var="pad_value_pad")
     dim(pheno.use)  
  
+
+### cormat on observed data
+    cor.mat <- cor(mat)
+    cor.dt <- as.data.table(reshape2::melt(cor.mat))
+    cor.plot <-ggplot(data=cor.dt, aes(x=Var1, y=Var2, fill=value)) + geom_tile() + theme(axis.text = element_blank()) + scale_fill_viridis()
+    cor.plot
+    
+
 ## basic PCA
     mat <- as.matrix(pheno.use[,-"ral_id"])
     rownames(mat) <- pheno.use$ral_id
@@ -79,12 +87,6 @@ install.packages("foreach")
     
     pc1_pc2 <- ggplot(data=proj, aes(x=PC1, y=PC2)) + geom_point() + theme_bw()
     pc3_pc4 <- ggplot(data=proj, aes(x=PC3, y=PC4)) + geom_point() + theme_bw()
-
-### cormat on observed data
-    cor.mat <- cor(mat)
-    cor.dt <- as.data.table(reshape2::melt(cor.mat))
-    cor.plot <-ggplot(data=cor.dt, aes(x=Var1, y=Var2, fill=value)) + geom_tile() + theme(axis.text = element_blank()) + scale_fill_viridis()
-    cor.plot
     
 ### your turn: are the phenotypes that are driving the strong positive loading on to PC1 highly correlated?    
   
