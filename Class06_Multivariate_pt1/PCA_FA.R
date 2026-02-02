@@ -122,11 +122,6 @@ install.packages("foreach")
     
     ggplot(data=proj, aes(x=In2Lt, y=ML4, group=In2Lt)) + geom_boxplot()  
  
-### homework. Describe how the Principal Component Analysis and the Factor Analysis of the DGRP phenotype data relate to each other. 
-### How do the resulting new dimensions from each analysis relate to one-another? For instance, is PC1 most similar to FA-dimension 1?
-### Produce at least one figure describing your result, and write a few sentences describing your figure.
-   
-   
    
    
           
