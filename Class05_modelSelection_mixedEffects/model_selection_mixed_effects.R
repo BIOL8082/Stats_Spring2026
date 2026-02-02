@@ -38,7 +38,7 @@ install.packages("lmerTest")
   
 ### your turn: capture the output of the predict function in a new column of the original data frame "clinal".
 ### call that new column, "pred"
-  
+  clinal[,pred:=predict(m3, re.form=NULL)]
   
 ### our turn: make a plot of the model predictions. 
 ### Compare that to a plot of the real data, with individual linear models for each genotype.
@@ -56,7 +56,8 @@ install.packages("lmerTest")
   
 ### Conduct an ANOVA between m4 and m5 to test the "significance" of food-genotype term. 
   anova(m2, m3)
-
+  anova(m1)
+  
 ### Flies are reared in vials, and vial effect can be profound. 
 ### How does the incorporation of the vial effect change the interpretation of our results?
   t0 <- lmer(tlmm~1+(1|vial), data=clinal)
@@ -71,7 +72,7 @@ install.packages("lmerTest")
   
   anova(t3, t2, t1, t0)
     
-  lmerTest::ranova(t3)
+  lmerTest::ranova(t0)
   
 ### what about a block effect? Is that a random effect or a fixed effect?
   g1 <- lmer(tlmm~food+(1|geno)+(1|vial)+(1|block), data=clinal)
@@ -79,5 +80,48 @@ install.packages("lmerTest")
   
   anova(g1, g2)
   
+### homework
+### what about ovariole number?
+clinal[,pop:=substr(geno, 0, 1)]
+clinal[,food_center:=food-mean(clinal$food)]
+
+g0 <- glmer(ovn~pop*food_center+(1|geno)+(1|vial)+(1|block), data=clinal, family=poisson())
+g1 <- glmer(ovn~pop+food_center+(1|geno)+(1|vial)+(1|block), data=clinal, family=poisson())
+g2 <- glmer(ovn~food_center+(1|geno)+(1|vial)+(1|block), data=clinal, family=poisson())
+
+anova(g1, g0, g2) 
   
+
+
+g0 <- lmer(tlmm~pop*food_center+(1|geno)+(1|vial)+(1|block), data=clinal)
+g1 <- lmer(tlmm~pop+food_center+(1|geno)+(1|vial)+(1|block), data=clinal)
+g2 <- lmer(tlmm~food_center+(1|geno)+(1|vial)+(1|block), data=clinal )
+anova(g1, g0, g2) 
+
+
+
+g0 <- glmer(ovn~tlmm*food+(1|geno)+(1|vial)+(1|block), data=clinal, family=poisson())
+g1 <- glmer(ovn~tlmm*food+(food|geno)+(1|vial)+(1|block), data=clinal, family=poisson())
+g2 <- glmer(ovn~tlmm*food+(tlmm+food|geno)+(1|vial)+(1|block), data=clinal, family=poisson())
+g3 <- glmer(ovn~tlmm*food+(tlmm*food|geno)+(1|vial)+(1|block), data=clinal, family=poisson())
+
+anova(g3, g2, g1, g0) 
+
+g1 <- lmer(ovn~food+(1|geno)+(1|vial)+(1|block), data=clinal)
+g2 <- lmer(ovn~food+(food|geno)+(1|vial)+(1|block), data=clinal)
+
+anova(g1, g2)
+
+
+
+
+
+
+
+
+
+
+
+
+
   
