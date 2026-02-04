@@ -17,7 +17,6 @@ install.packages("ggcorrplot")
   
   
 ### LDA
-   
   ### specify a training dataset and a testing dataset
     ### the sample function
       sample(letters, size=10)
@@ -68,14 +67,14 @@ install.packages("ggcorrplot")
         cor.plot
         
       ### hierarchical clustering 
-        ge.dist <- dist(mat, method="minkowski")
+        ge.dist <- dist(mat, method="euclidean")
         ge.hclust <- hclust(ge.dist, method="average")
         plot(ge.hclust)
         str(ge.hclust)      
       
       # reorder correlation plot based on HC clustering
       
-        corplot <- ggcorrplot(cor.mat, hc.order=T, lab=F, method="square", outline.color=NULL, tl.cex=4) +  
+        ggcorrplot(cor.mat, hc.order=T, lab=F, method="square", outline.color=NULL, tl.cex=4) +  
           theme(axis.text = element_blank()) + scale_fill_viridis()
       
     ### kmeans
@@ -92,7 +91,7 @@ install.packages("ggcorrplot")
         
         ggplot(data=km.dt, aes(x=PC1, y=PC2, color=as.factor(V1))) + geom_point()        
         
-        
+          
 ### RDA
   ge.norm <- decostand(ge[,-c("variable", "trt", "cage")], "hellinger")
   
