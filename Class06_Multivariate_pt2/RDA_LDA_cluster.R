@@ -29,9 +29,10 @@ install.packages("ggcorrplot")
     ### randomly select 60% of the data as training
       ge[,train:=sample(2, size=dim(ge)[1], replace=T,  prob=c(.6, .4))]
       table(ge$train, ge$trt)
-      train <- ge[train==1, -c("train", "variable")]
+      train <- ge[train==1, -c("train", "variable", "cage")]
       
       linear <- lda(trt~., data=train[,-1543])
+      
       str(linear)
       
     ### use the training data to generate the predicted classes. This should work well.
@@ -46,19 +47,19 @@ install.packages("ggcorrplot")
       sum(diag(tab))/sum(tab) ### accuracy of classification
   
     ### so what about the testing data?
-      p2 <- predict(linear, ge[train==2, -c("train", "variable")])
+      p2 <- predict(linear, ge[train==2, -c("train", "variable", "cage")])
       tab2 <- table(Predicted = p2$class, Actual = ge[train==2, -c("train", "variable")]$trt)
       tab2
       
       sum(diag(tab2))/sum(tab2) ### accuracy of classification
-      
+      prop.table(table(ge[train==2, -c("train", "variable")]$trt))
        
   ### cluster analysis. Here, we can ask if the gene expression profile for any individual (based on ~2K genes) are correlated with other individuals
       ### first step, look at the correlation structure of the data
-        mat <- as.matrix(ge[,-c("train", "variable", "trt")])
+        mat <- as.matrix(ge[,-c("train", "variable", "trt", "cage")])
         dim(mat)
         rownames(mat) <- ge$variable
-        colnames(mat) <- names(ge[,-c("train", "variable", "trt")])
+        colnames(mat) <- names(ge[,-c("train", "variable", "trt", "cage")])
         cor.mat <- cor(t(mat)) ### why do we need to transpose?
         
         cor.dt <- as.data.table(reshape2::melt(cor.mat))
