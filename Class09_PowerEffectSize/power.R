@@ -12,8 +12,10 @@ install.packages("effectsize")
 ##############################
   
   run_experiment <- function(n, effect, sd = 1) {
+    
     control   <- rnorm(n, 0, sd)
     treatment <- rnorm(n, effect, sd)
+    
     test <- t.test(treatment, control)
     
     data.table(
@@ -35,7 +37,17 @@ install.packages("effectsize")
   
 ### Your turn: What sample size would you need to obtain 90% power to reject the null at alpha<.05?
 ### Hint, use a nested foreach loop with the inner loop iterating across a vector of sample sizes
- 
+  library(doMC)
+  registerDoMC(4)
+  results2 <- foreach(i = 1:50, .combine = rbind) %do% {
+    foreach(j = seq(from=20, to=1000, by=40), .combine=rbind)%dopar%{
+      message(paste(i, j, sep=" / "))
+      run_experiment(n=j, true_effect)
+    }
+  }
+  
+  results2.ag <- results2[,list(power=mean(pval<.05)), list(n, effect_size, sd)]
+  ggplot(data=results2.ag, aes(x=n, y=power)) + geom_line()
   
 ##############################
 ### Regression towards the mean
@@ -44,7 +56,7 @@ install.packages("effectsize")
 ### Let's work with a model based on quantitative genetics
 ### Here, phenotypic variation is determined by genetics and environment: Vp=Vg+Ve
 ### Let's assume that any individual has a true "genetic" value that is modified by aspects of the environment that we can control and that we cannot control
-  
+  n_ind<-1000
   true_trait <- data.table(id=c(1:1000), true_value=rnorm(n_ind, mean = 0, sd = 1))
 
 ### Let's imagine that we measure an once, and then come back some time later to measure them again. 
