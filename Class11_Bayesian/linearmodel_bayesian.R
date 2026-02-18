@@ -39,7 +39,9 @@ install.packages("rstanarm")
 ###################################
 # Bayesian Posterior from a package
 ###################################
-
+### STAN is a popular choice for fancy implementations of MCMC
+### https://khakieconomics.github.io/half_day_course/index.html for more. 
+  
   ### let's assume that we have no expectations about restaurant quality. 
     post_uniform <-
       stan_glm(
