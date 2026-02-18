@@ -41,6 +41,7 @@ install.packages("rstanarm")
 ###################################
 ### STAN is a popular choice for fancy implementations of MCMC
 ### https://khakieconomics.github.io/half_day_course/index.html for more. 
+### https://stan-playground.flatironinstitute.org
   
   ### let's assume that we have no expectations about restaurant quality. 
     post_uniform <-
