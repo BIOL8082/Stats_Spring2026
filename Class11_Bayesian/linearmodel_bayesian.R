@@ -95,14 +95,12 @@ install.packages("rstanarm")
 ### Here, for simplicity, we will continue to work with a linear regression even though this is a silly example of ABC    
       
 # First, we define a function that generates the prior distributions for the slope and intercept.
-  rprior <- function() {
-    c(beta0 = rnorm(1, 100, 10),
-      beta1 = rnorm(1, -10, 1))
-  }
+
     rprior <- function() {
       c(beta0 = rnorm(1, 0, 100),
         beta1 = rnorm(1, 0, 100))
     }
+    
 # Next, we define a function that generates our summary statistics from any simulation
   
   summary_stats <- function(y, x){
@@ -121,7 +119,7 @@ install.packages("rstanarm")
 ### simplest form of ABC. Just keep the simulations that are the closest to the data
   
   nsim <- 15000
-  registerDoMC(10)
+  registerDoMC(4)
   sim_results <- foreach(i = 1:nsim, .combine = rbind) %dopar% {
     
     priorDraw <- rprior()
@@ -144,9 +142,9 @@ install.packages("rstanarm")
   }
   
   dt_sim <- as.data.table(sim_results)
-
+  ggplot(data=dt_sim, aes(dist)) + geom_density()
+  
 ### reject the 99% worst, accept 1% best simulations
-
   tol <- 0.01
   eps <- quantile(dt_sim$dist, tol)
   dt_sim[,accecpt:=dist<eps]
@@ -158,8 +156,14 @@ install.packages("rstanarm")
 ########################
   dt_compare <- rbind(post_stan, dt_sim, fill=T)
   
-  ggplot(data=dt_compare, aes(x=beta0, y=beta1, color=accecpt)) + geom_point() + facet_grid(~method) +
-    geom_point(data=dt_compare[accecpt==T]) + theme_bw()
+  ggplot(data=dt_compare, aes(x=beta0, y=beta1, color=accecpt)) + geom_point() + 
+    facet_grid(~method) +
+    geom_point(data=dt_compare[accecpt==T]) + theme_bw() +
+    ylim(-300, 300) + xlim(-500, 500)
   
+  
+median(dt_sim[accecpt==T]$beta0)
+median(dt_sim[accecpt==T]$beta1)
+sd(dt_sim[accecpt==T]$beta1)
 
 
